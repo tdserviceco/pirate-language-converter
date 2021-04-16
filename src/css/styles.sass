@@ -1,0 +1,26 @@
+@import reset
+@import variables
+
+// Please delete everything from here if you want to start from scratch  
+#root
+  min-height: 100vh
+  section
+    padding: 0 1rem
+    height: returnCalc(100vh, 0.0625rem)
+    background: #000
+    color: #fff
+    .presentation
+      padding-top: 1rem
+      display: flex
+      justify-content: center
+      align-content: center
+      img
+        @include circle(3.125rem, 50%)
+      h1
+        padding-left: 1rem
+        line-height: 1.7
+        font-size: 2rem
+    p
+      padding-top: 1rem
+      font-size 1.5rem
+      line-height: 1.7
