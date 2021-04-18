@@ -9,7 +9,6 @@ const { get, put } = require('./functions/pirateConverter/pirate-converter');
 dotenv.config()
 const server = http.createServer();
 
-// console.log(chalk.red(__dirname + '/client/css/main.css'))
 server.on('request', (req, res) => {
   if (req.url === '/') {
     if (req.method === 'GET') {
@@ -25,10 +24,10 @@ server.on('request', (req, res) => {
     else if (req.method === 'POST') {
       req.on('data', (data) => {
 
-        // convert buffert to String
+        // omvandlar data till sträng
         let resp = data.toString();
 
-        // Send response to client
+        // skicka tillbaka data till klient sidan
         res.writeHead(200).end(put(resp));
       })
     }
