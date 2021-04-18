@@ -1,0 +1,46 @@
+body {
+  background: hsl(216, 73%, 9%);
+  width: 31.25rem;
+  margin: 0 auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+img {
+  height: 160px;
+  width: 160px;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+textarea {
+  margin: 4rem 4rem 2rem;
+  background: #061327;
+  color: #fff;
+  padding: 1rem;
+}
+
+::placeholder {
+  color: #fff;
+}
+
+.button,
+textarea {
+  border-radius: 0.3rem;
+}
+
+.button {
+  border: none;
+  color: #fff;
+  background: #eb4444;
+  padding: 1.2rem;
+  text-align: center;
+  margin: 1rem 4rem;
+}
+
+.button:disabled {
+  background: rgba(235, 68, 68, 0.5);
+}

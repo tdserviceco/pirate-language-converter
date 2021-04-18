@@ -1,39 +1,76 @@
+const http = require('http');
 const chalk = require('chalk');
-const { mysqlSetup, mongoDBSetup } = require('./db/dbSetup');
-const express = require('express');
-const port = process.env.PORT || 5000;
 const dotenv = require('dotenv');
-const cors = require('cors');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
+const PORT = process.env.PORT || '3000';
+const { get, put } = require('./functions/pirateConverter/pirate-converter');
 
-const build = path.join(__dirname, 'build')
-const rootFile = path.join(__dirname, 'build', 'index.html')
+dotenv.config()
+const server = http.createServer();
 
-/** Database (uncomment to use it) **/
-mongoDBSetup()
-
-const app = express();
-dotenv.config();
-app.use(cors())
-app.use(express.json()) //So we can see .post request
-
-
-// if you using a reactJS or similar and building a "build folder" this will run client side
-try {
-  if (fs.existsSync(build)) {
-    app.use(express.static(__dirname));
-    app.use(express.static(build));
-    app.get('/*', (req, res) => {
-      res.sendFile(rootFile);
-    })
+// console.log(chalk.red(__dirname + '/client/css/main.css'))
+server.on('request', (req, res) => {
+  if (req.url === '/') {
+    if (req.method === 'GET') {
+      let index = fs.createReadStream(__dirname + '/client/index.html', 'utf-8');
+      index.pipe(res)
+    }
   }
-} catch (err) {
-  console.error(err)
-}
+  else if (req.url === '/api/pirate') {
+    if (req.method === 'GET') {
+      res.writeHead(200).end(get())
+    }
 
-app.get('/', (req, res) => {
-  res.send('No build folder yet')
+    else if (req.method === 'POST') {
+      req.on('data', (data) => {
+
+        // convert buffert to String
+        let resp = data.toString();
+
+        // Send response to client
+        res.writeHead(200).end(put(resp));
+      })
+    }
+  }
+
+  //Letar efter css, ico eller svg
+  else if (req.url.match("\.css$")) {
+    var cssPath = path.join(__dirname, 'client', req.url);
+    var fileStream = fs.createReadStream(cssPath, "UTF-8");
+    res.writeHead(200, { "Content-Type": "text/css" });
+    fileStream.pipe(res);
+
+  } else if (req.url.match("\.svg$")) {
+    var imagePath = path.join(__dirname, 'client', req.url);
+    var fileStream = fs.createReadStream(imagePath);
+    res.writeHead(200, { "Content-Type": "image/svg+xml" });
+    fileStream.pipe(res);
+  }
+
+  else if (req.url.match("\.png$")) {
+    var imagePath = path.join(__dirname, 'client', req.url);
+    var fileStream = fs.createReadStream(imagePath);
+    res.writeHead(200, { "Content-Type": "image/png" });
+    fileStream.pipe(res);
+  }
+
+  else if (req.url.match("\.js$")) {
+    var imagePath = path.join(__dirname, 'client', req.url);
+    var fileStream = fs.createReadStream(imagePath);
+    res.writeHead(200, { "Content-Type": "text/js" });
+    fileStream.pipe(res);
+  }
+
+  else if (req.url.match("\.ico$")) {
+    var imagePath = path.join(__dirname, 'client', req.url);
+    var fileStream = fs.createReadStream(imagePath);
+    res.writeHead(200, { "Content-Type": "image/ico" });
+    fileStream.pipe(res);
+  }
+  else {
+    res.writeHead(400).end('Yikes... error 400... kolla upp det!')
+  }
 })
 
-app.listen(port, () => console.log(chalk.green(`Listening on `) + chalk.blue(`http://localhost:`) + chalk.red(`${port}`)))
+server.listen(PORT, () => console.log(`${chalk.green('Server is: ')}${chalk.blue('http://localhost:')}${chalk.red(PORT)}`))
